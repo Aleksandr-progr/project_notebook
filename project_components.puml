@@ -1,0 +1,24 @@
+@startuml
+package "model" {
+  class Note
+  class Notebook
+}
+
+package "view" {
+  class NotebookView
+  class ConsoleNotebookView
+}
+
+package "presenter" {
+  class NotebookPresenter
+}
+
+package "main" {
+  class Main
+}
+
+Main --> NotebookPresenter : starts
+NotebookPresenter --> Notebook : manages
+NotebookPresenter --> NotebookView : updates
+NotebookView --> ConsoleNotebookView : interacts
+@enduml
