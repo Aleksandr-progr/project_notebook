@@ -2,6 +2,7 @@ package model;
 
 import java.io.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -80,17 +81,38 @@ public class Notebook {
      * @param fileName - имя файла, из которого нужно загрузить заметки.
      * @throws IOException - исключение при ошибке чтения файла.
      */
-    public void loadFromFile(String fileName) throws IOException {
+    public void loadFromFile(String fileName) {
         notes.clear();  // Очищаем список заметок перед загрузкой.
+
         // Используем try-with-resources для автоматического закрытия ресурсов.
         try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
             String line;
             while ((line = reader.readLine()) != null) {  // Читаем файл построчно.
-                String[] parts = line.split(": ", 2);  // Разделяем строку на дату и описание.
-                LocalDateTime dateTime = LocalDateTime.parse(parts[0]);  // Парсим дату из строки.
-                String description = parts[1];  // Получаем описание.
-                notes.add(new Note(dateTime, description));  // Создаем объект заметки и добавляем в список.
+                try {
+                    // Проверка на корректность строки, разделяем на дату и описание
+                    String[] parts = line.split(": ", 2);  // Разделяем строку на дату и описание.
+                    if (parts.length != 2) {
+                        System.out.println("Неверный формат строки: " + line);
+                        continue;  // Пропускаем некорректные строки
+                    }
+
+                    // Парсим дату и описание
+                    LocalDateTime dateTime = LocalDateTime.parse(parts[0]);  // Парсим дату из строки.
+                    String description = parts[1];  // Получаем описание.
+
+                    // Создаем объект заметки и добавляем в список.
+                    notes.add(new Note(dateTime, description));  
+                } catch (DateTimeParseException e) {
+                    // Обработка ошибок парсинга даты
+                    System.out.println("Ошибка формата даты в строке: " + line);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    // Обработка ошибки, если строка не содержит разделителя ": "
+                    System.out.println("Некорректная строка, отсутствует описание или дата: " + line);
+                }
             }
+        } catch (IOException e) {
+            // Общая ошибка ввода-вывода
+            System.out.println("Ошибка при чтении файла: " + e.getMessage());
         }
     }
 }
