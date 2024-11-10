@@ -1,89 +1,62 @@
 package view;
 
+import model.Note;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 
-/**
- * Конкретная реализация интерфейса NotebookView для работы с консольным интерфейсом.
- * Этот класс предназначен для взаимодействия с пользователем через консоль: вывод заметок,
- * получение ввода даты, описания заметки и имени файла.
- * 
- * Задачи:
- * - Отображение заметок пользователю.
- * - Получение данных от пользователя через консоль.
- */
 public class ConsoleNotebookView implements NotebookView {
-    
-    // Сканер для считывания ввода пользователя из консоли
-    private Scanner scanner = new Scanner(System.in);
+    private final Scanner scanner = new Scanner(System.in);
 
-    /**
-     * Отображает список заметок в консоль.
-     * Если список пуст, выводится сообщение о том, что заметки не найдены.
-     * 
-     * @param notes Список заметок для отображения.
-     *              Если список пуст, выводится соответствующее сообщение.
-     */
     @Override
     public void showNotes(List<Note> notes) {
         if (notes.isEmpty()) {
-            // Если список пуст, выводится сообщение о том, что заметки не найдены
-            System.out.println("No notes found.");
+            System.out.println("Заметки не найдены.");
         } else {
-            // Иначе, выводим все заметки
             for (Note note : notes) {
-                System.out.println(note);
+                // Используем getDateTime() для вывода времени и getDescription() для описания
+                System.out.println("Заметка: " + note.getDescription() + " (создано: " + note.getDateTime() + ")");
             }
         }
     }
 
-    /**
-     * Показывает сообщение пользователю в консоли.
-     * 
-     * @param message Сообщение для отображения.
-     *                Метод используется для информирования пользователя о различных событиях.
-     */
     @Override
     public void showMessage(String message) {
         System.out.println(message);
     }
 
-    /**
-     * Запрашивает у пользователя ввод даты и времени.
-     * Ожидаемый формат ввода: yyyy-MM-dd'T'HH:mm, например, 2024-11-08T10:30.
-     * 
-     * @return Введенная пользователем дата и время в формате LocalDateTime.
-     */
     @Override
     public LocalDateTime getDateTimeInput() {
-        System.out.println("Enter date and time (yyyy-MM-dd'T'HH:mm):");
-        String input = scanner.nextLine(); // Считываем строку с консоли
-        DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME; // Формат даты
-        return LocalDateTime.parse(input, formatter); // Парсим строку в LocalDateTime
+        while (true) {
+            try {
+                System.out.println("Введите дату и время (yyyy-MM-dd'T'HH:mm):");
+                String input = scanner.nextLine().trim();
+                if (input.isEmpty()) {
+                    System.out.println("Дата не может быть пустой.");
+                    continue;
+                }
+                return LocalDateTime.parse(input);
+            } catch (DateTimeParseException e) {
+                System.out.println("Неверный формат даты. Пожалуйста, используйте формат: yyyy-MM-dd'T'HH:mm (например, 2024-11-08T10:30)");
+            }
+        }
     }
 
-    /**
-     * Запрашивает у пользователя описание заметки.
-     * 
-     * @return Введенное пользователем описание заметки.
-     *         Используется для создания или редактирования заметки.
-     */
     @Override
     public String getDescriptionInput() {
-        System.out.println("Enter note description:");
-        return scanner.nextLine(); // Считываем описание с консоли
+        System.out.println("Введите описание заметки:");
+        return scanner.nextLine().trim();
     }
 
-    /**
-     * Запрашивает у пользователя имя файла для сохранения или загрузки данных.
-     * 
-     * @return Введенное пользователем имя файла.
-     */
     @Override
     public String getFileNameInput() {
-        System.out.println("Enter file name:");
-        return scanner.nextLine(); // Считываем имя файла с консоли
+        System.out.println("Введите имя файла:");
+        return scanner.nextLine().trim();
+    }
+
+    // Закрытие Scanner (в случае, если программа завершится)
+    public void close() {
+        scanner.close();
     }
 }
