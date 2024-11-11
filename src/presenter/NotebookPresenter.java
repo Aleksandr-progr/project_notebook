@@ -4,10 +4,10 @@ package presenter;
 import java.time.LocalDateTime;
 
 public interface NotebookPresenter {
-    void addNote(LocalDateTime dateTime, String description);  // Метод для добавления заметки с параметрами
+    void addNote(LocalDateTime dateTime, String description);  // Добавление заметки
     void showNotes();  // Показать все заметки
-    void showNotesForDay(LocalDateTime dateTime);  // Показать заметки на конкретный день
+    void showNotesForDay(LocalDateTime dateTime);  // Показать заметки на день
     void showNotesForWeek(LocalDateTime startOfWeek);  // Показать заметки на неделю
-    void saveNotes();  // Сохранить заметки
-    void loadNotes();  // Загрузить заметки
+    void saveNotes(String fileName);  // Сохранение заметок в файл
+    void loadNotes(String fileName);  // Загрузка заметок из файла
 }

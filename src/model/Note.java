@@ -3,11 +3,9 @@ package model;
 import java.time.LocalDateTime;
 
 public class Note {
-    // Переменная для хранения времени создания заметки.
-    private LocalDateTime dateTime;
-    
-    // Переменная для хранения описания заметки (например, текста заметки).
-    private String description;
+    // Финальные переменные для хранения времени создания и описания заметки.
+    private final LocalDateTime dateTime;
+    private final String description;
 
     /**
      * Конструктор класса Note.
